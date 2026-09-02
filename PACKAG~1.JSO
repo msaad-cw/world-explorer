@@ -1,0 +1,15 @@
+{
+  "name": "world-explorer",
+  "version": "1.0.0",
+  "description": "Explore any country in the world: population, currencies, languages, flags, neighbors and more. Powered by the free REST Countries API. Zero runtime dependencies.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {},
+  "license": "MIT"
+}

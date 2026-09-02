@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>World Explorer</title>
+  <meta name="description" content="Explore any country in the world: population, currencies, languages, flags, neighbors and more." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>🌍 World Explorer</h1>
+      <p class="tagline">Live facts on every country on Earth.</p>
+      <div class="controls">
+        <input id="search" type="search" placeholder="Search countries…" autocomplete="off" />
+        <select id="region">
+          <option value="">All regions</option>
+          <option>Africa</option>
+          <option>Americas</option>
+          <option>Asia</option>
+          <option>Europe</option>
+          <option>Oceania</option>
+          <option>Antarctic</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p id="status" class="status">Loading countries…</p>
+    <div id="grid" class="grid"></div>
+  </main>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-card">
+      <button id="modal-close" class="close" aria-label="Close">&times;</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="wrap">
+      <span>Data: <a href="https://restcountries.com" target="_blank" rel="noopener">REST Countries</a> · Deployed on Cloudways Velocity</span>
+    </div>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

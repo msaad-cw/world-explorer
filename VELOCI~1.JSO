@@ -1,0 +1,9 @@
+{
+  "name": "world-explorer",
+  "type": "nodejs",
+  "runtime": "node18",
+  "install": "npm install",
+  "build": "",
+  "start": "npm start",
+  "healthCheckPath": "/healthz"
+}
