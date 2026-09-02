@@ -1,5 +1,5 @@
 // World Explorer — zero-dependency Node.js server (uses only built-in modules).
-// Serves the static frontend and proxies the free REST Countries API with caching.
+// Serves the static frontend and proxies the free countries.dev API with caching.
 
 const http = require("http");
 const fs = require("fs");
@@ -9,9 +9,10 @@ const PORT = process.env.PORT || 3000;
 // Only these files are ever served statically (keeps server source private).
 const STATIC_FILES = new Set(["index.html", "styles.css", "app.js"]);
 
-const API = "https://restcountries.com/v3.1";
-const FIELDS =
-  "name,cca2,cca3,capital,region,subregion,population,area,languages,currencies,flags,latlng,borders,timezones,tld,maps,car";
+// countries.dev — free, no API key required, and carries the full dataset
+// (flags, borders, currencies, languages, maps). Same data lineage as the
+// original REST Countries, which shut down its free/no-key endpoints.
+const API = "https://countries.dev";
 
 // Simple in-memory cache so we don't hammer the upstream API
 const cache = new Map();
@@ -32,33 +33,31 @@ async function cachedFetch(url) {
   return data;
 }
 
+// Map a countries.dev record onto the compact shape the frontend expects.
 function slim(c) {
   return {
-    name: c.name && c.name.common,
-    official: c.name && c.name.official,
-    cca2: c.cca2,
-    cca3: c.cca3,
-    capital: (c.capital && c.capital[0]) || null,
+    name: c.name,
+    official: c.nativeName || c.name,
+    cca2: c.alpha2Code,
+    cca3: c.alpha3Code,
+    capital: c.capital || null,
     region: c.region,
     subregion: c.subregion,
     population: c.population,
     area: c.area,
-    languages: c.languages ? Object.values(c.languages) : [],
-    currencies: c.currencies
-      ? Object.entries(c.currencies).map(([code, v]) => ({
-          code,
-          name: v.name,
-          symbol: v.symbol,
-        }))
+    languages: Array.isArray(c.languages)
+      ? c.languages.map((l) => l.name).filter(Boolean)
+      : [],
+    currencies: Array.isArray(c.currencies)
+      ? c.currencies.map((x) => ({ code: x.code, name: x.name, symbol: x.symbol }))
       : [],
     flag: (c.flags && (c.flags.svg || c.flags.png)) || null,
-    flagAlt: (c.flags && c.flags.alt) || "",
+    flagAlt: "",
     latlng: c.latlng || [],
     borders: c.borders || [],
     timezones: c.timezones || [],
-    tld: c.tld || [],
+    tld: c.topLevelDomain || [],
     maps: (c.maps && c.maps.googleMaps) || null,
-    driving: (c.car && c.car.side) || null,
   };
 }
 
@@ -109,7 +108,8 @@ const server = http.createServer(async (req, res) => {
 
   if (url === "/api/countries") {
     try {
-      const data = await cachedFetch(`${API}/all?fields=${FIELDS}`);
+      const data = await cachedFetch(`${API}/countries`);
+      if (!Array.isArray(data)) throw new Error("Unexpected upstream response");
       const list = data
         .map(slim)
         .sort((a, b) => (a.name || "").localeCompare(b.name || ""));
@@ -122,7 +122,7 @@ const server = http.createServer(async (req, res) => {
   const m = url.match(/^\/api\/country\/([A-Za-z]{2,3})$/);
   if (m) {
     try {
-      const data = await cachedFetch(`${API}/alpha/${encodeURIComponent(m[1])}?fields=${FIELDS}`);
+      const data = await cachedFetch(`${API}/alpha/${encodeURIComponent(m[1])}`);
       const country = Array.isArray(data) ? data[0] : data;
       return sendJson(res, 200, slim(country));
     } catch (e) {
@@ -135,8 +135,8 @@ const server = http.createServer(async (req, res) => {
 });
 
 if (require.main === module) {
-  server.listen(PORT, () => {
-    console.log(`World Explorer running on port ${PORT}`);
+  server.listen(PORT, "0.0.0.0", () => {
+    console.log(`World Explorer listening on 0.0.0.0:${PORT}`);
   });
 }
 

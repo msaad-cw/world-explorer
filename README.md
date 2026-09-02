@@ -1,6 +1,6 @@
 # 🌍 World Explorer
 
-A fast, dependency-light Node.js app for exploring every country on Earth — population, capital, currencies, languages, flags, neighbors, timezones and more. Data comes live from the free [REST Countries API](https://restcountries.com) (no API key required), with server-side caching so it stays snappy.
+A fast, dependency-light Node.js app for exploring every country on Earth — population, capital, currencies, languages, flags, neighbors, timezones and more. Data comes live from the free [countries.dev API](https://countries.dev) (no API key required), with server-side caching so it stays snappy.
 
 Built to deploy in one click on **Cloudways Velocity** via GitHub.
 

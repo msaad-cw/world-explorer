@@ -80,7 +80,7 @@ function openCountry(code) {
         <div><span class="label">Languages</span>${languages}</div>
         <div><span class="label">Currencies</span>${currencies}</div>
         <div><span class="label">Timezones</span>${c.timezones.join(", ") || "—"}</div>
-        <div><span class="label">Driving side</span>${c.driving || "—"}</div>
+        <div><span class="label">Top-level domain</span>${c.tld.join(", ") || "—"}</div>
       </div>
       <div style="margin-top:16px">
         <span class="label">Neighbors</span>
